@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <g fill="none" stroke="#78D8C8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M173.862556 547.539678 A340 340 0 0 1 617.065778 188.640784" stroke-width="52"/>
+    <path d="M838.828977 418.283299 A340 340 0 0 1 847.814036 565.187718" stroke-width="52"/>
+    <path d="M756.575532 748.183846 A340 340 0 0 1 267.424468 748.183846" stroke-width="52"/>
+    <path d="M294 654 L400 430 Q412 410 430 433 L512 544 L594 433 Q612 410 624 430 L730 654" stroke-width="86"/>
+  </g>
+  <circle cx="748.183846" cy="267.424468" r="58" fill="#78D8C8"/>
+</svg>

@@ -1,0 +1,133 @@
+"use client";
+export const dynamic = "force-dynamic";
+
+import React, { useEffect, useState, Suspense } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, FileText } from "lucide-react";
+import { db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
+
+// Header ẩn nếu có ?p=mobile
+function HeaderClient() {
+  "use client";
+  const { useSearchParams } = require("next/navigation");
+  const searchParams = useSearchParams();
+  const isMobile = searchParams.get("p") === "mobile";
+
+  if (isMobile) return null;
+
+  return (
+    <header className="sticky top-0 z-40 w-full backdrop-blur-lg bg-black/50 border-b border-white/10">
+      <div className="container flex h-16 items-center space-x-4">
+        <Link href="/" className="flex gap-2 items-center text-xl font-bold">
+          <Image src="/mintempo/symbol.svg" alt="" width={28} height={28} />
+          <span className="text-[#78D8C8]">
+            Mintempo
+          </span>
+        </Link>
+        <div className="flex-1" />
+        <Link href="/">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2 border-[#78D8C8]/50 text-white hover:bg-[#78D8C8]/10"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Home
+          </Button>
+        </Link>
+      </div>
+    </header>
+  );
+}
+
+// Nút quay về cuối trang (ẩn nếu có ?p=mobile)
+function BackButton() {
+  "use client";
+  const { useSearchParams } = require("next/navigation");
+  const searchParams = useSearchParams();
+  const isMobile = searchParams.get("p") === "mobile";
+
+  if (isMobile) return null;
+
+  return (
+    <div className="text-center mt-12">
+      <Link href="/">
+        <Button className="gap-2 bg-[#78D8C8] text-[#0E171E] hover:bg-[#a1eee2] transition-all duration-300 shadow-lg shadow-[#78D8C8]/25">
+          <ArrowLeft className="h-4 w-4" />
+          Back to Mintempo
+        </Button>
+      </Link>
+    </div>
+  );
+}
+
+export default function TermsOfServicePage() {
+  const [content, setContent] = useState("Loading document…");
+
+  useEffect(() => {
+    const fetchTerms = async () => {
+      const ref = doc(db, "pages", "mintampo");
+      const snap = await getDoc(ref);
+      if (snap.exists() && snap.data().terms) {
+        setContent(snap.data().terms);
+      } else {
+        setContent("Terms & Conditions not found for this app.");
+      }
+    };
+
+    fetchTerms().catch(() => {
+      setContent("Unable to load this document right now. Please try again later.");
+    });
+  }, []);
+
+  return (
+    <div className="flex min-h-screen flex-col bg-gradient-to-b from-black via-gray-900 to-black text-white">
+      {/* Animated background elements */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#78D8C8]/10 rounded-full blur-3xl animate-pulse"></div>
+        <div
+          className="absolute bottom-1/3 right-1/3 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        ></div>
+      </div>
+
+      {/* Header */}
+      <Suspense fallback={null}>
+        <HeaderClient />
+      </Suspense>
+
+      <main className="flex-1 relative z-10">
+        <section className="w-full py-12 md:py-24 lg:py-32">
+          <div className="container px-4 md:px-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12 animate-fadeIn">
+                <div className="flex justify-center mb-4">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#78D8C8]/10 text-[#78D8C8] border border-[#78D8C8]/40">
+                    <FileText className="h-8 w-8" />
+                  </div>
+                </div>
+                <h1 className="text-4xl font-bold tracking-tighter md:text-5xl text-[#78D8C8]">
+                  Terms of Service
+                </h1>
+                <p className="text-gray-400 mt-4">Mintempo</p>
+              </div>
+
+              <div
+                className="space-y-8"
+                dangerouslySetInnerHTML={{ __html: content }}
+              />
+
+              {/* Back Button */}
+              <Suspense fallback={null}>
+                <BackButton />
+              </Suspense>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}
